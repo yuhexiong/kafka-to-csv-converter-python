@@ -1,4 +1,4 @@
-# Kafka To Csv
+# Kafka To CSV
 
 Parse the messages in the specified Kafka topic as JSON, then convert the keys and values into columns and values, and export them as CSV.
 
