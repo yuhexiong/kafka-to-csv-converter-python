@@ -1,12 +1,13 @@
-from datetime import datetime
-from confluent_kafka import Consumer, KafkaException, KafkaError
-import pandas as pd
 import json
+from datetime import datetime
+
+import pandas as pd
+from confluent_kafka import Consumer, KafkaError, KafkaException
 
 conf = {
     'bootstrap.servers': 'KAFKA_HOST:9092',
     'group.id': 'group-id',
-    'auto.offset.reset': 'earliest', 
+    'auto.offset.reset': 'earliest',
 }
 
 consumer = Consumer(conf)
@@ -16,12 +17,12 @@ consumer.subscribe([topic])
 
 messages = []
 
-no_message_count = 0 
+no_message_count = 0
 max_no_message_count = 3
 
 try:
     while True:
-        msg = consumer.poll(timeout=10.0)  
+        msg = consumer.poll(timeout=10.0)
         if msg is None:
             print("no message, polling again")
             no_message_count += 1
@@ -39,7 +40,7 @@ try:
                 raise KafkaException(msg.error())
 
         message_value = msg.value().decode('utf-8')
-        messages.append(json.loads(message_value) )
+        messages.append(json.loads(message_value))
 
 except KeyboardInterrupt:
     print("stop by key board interrupt")
@@ -47,7 +48,7 @@ except KeyboardInterrupt:
 finally:
     consumer.close()
 
-df = pd.json_normalize(messages) 
+df = pd.json_normalize(messages)
 
 current_time = datetime.now().strftime('%Y%m%d_%H%M%S')
 filename = f'{topic}_{current_time}.csv'
